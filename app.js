@@ -1,3 +1,6 @@
+var Eingabe1
+var Eingabe2
+
 var mymap = L.map('mapid').setView([51.505, -0.09], 13);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -5,13 +8,22 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
 }).addTo(mymap);
 
+
+L.tileLayer('https://tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=7fe0a7c2949f42168c03cae8ebb202f2', {
+    maxZoom: 18,
+}).addTo(mymap);
+
+L.tileLayer('http://t1.openseamap.org/seamark/{z}/{x}/{y}.png',{
+    maxZoom: 18,
+}).addTo(mymap);
+
 var marker = L.marker([53.866376, 10.687195]).addTo(mymap);
 marker.bindPopup("<b>MediaFactory</b><br>Softwareentwickler in Luebeck, Schleswig-Holstein.").openPopup();
 
-var popup = L.popup()
-    .setLatLng([51.5, -0.09])
+/*var popup = L.popup()
+    .setLatLng([53.866376, 10.687195])
     .setContent("I am a standalone popup.")
-    .openOn(mymap);
+    .openOn(mymap);*/
 
 (function() {       
     $("#Isearch").click(function(){
@@ -31,6 +43,15 @@ function doLocate(str, ort) {
                 if (result && result[0]) {
                     marker.setLatLng([result[0].lat, result[0].lon])
                     mymap.setView([result[0].lat, result[0].lon], 15)
+                    Eingabe1=result[0].lat;
+                    Eingabe2=result[0].lon;
+                    L.Routing.control({
+                      waypoints: [
+                        L.latLng(53.866376, 10.687195),
+                        L.latLng(parseFloat(Eingabe1), parseFloat(Eingabe2))
+                      ]
+                    }).addTo(mymap);
+
                 } else {
                     alert("Adresse nicht gefunden")
                 }
@@ -39,42 +60,39 @@ function doLocate(str, ort) {
     }
 
 
+//Fullscreen
+mymap.addControl(new L.Control.Fullscreen());
+mymap.isFullscreen() // Is the map fullscreen?
+mymap.toggleFullscreen() // Either go fullscreen, or cancel the existing fullscreen.
 
-$('#getFullScreen').click(function(e){
-    //$('#myDiv').toggleClass('fullscreen'); 
-    vollbild();
+// `fullscreenchange` Event that's fired when entering or exiting fullscreen.
+mymap.on('fullscreenchange', function () {
+    if (mymap.isFullscreen()) {
+        console.log('entered fullscreen');
+    } else {
+        console.log('exited fullscreen');
+    }
 });
 
-function vollbild() {
 
-  var element = document.getElementById("mapid");
 
-  if (element.requestFullScreen) {
+//minimap
+var osm2 = new L.TileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {minZoom: 5, maxZoom: 8, attribution: "http://openstreetmap.org"});
+var MiniMap = new L.Control.MiniMap(osm2).addTo(mymap);
 
-    if (!document.fullScreen) {
-      element.requestFullscreen();
-    } else {
-      document.exitFullScreen();
-    }
+//measureControl
+mymap.addControl(new L.Control.ScaleNautic({
+                metric: true,
+                imperial: true,
+                nautic: false
+            }));
 
-  } else if (element.mozRequestFullScreen) {
 
-    if (!document.mozFullScreen) {
-      element.mozRequestFullScreen();
-    } else {
-      document.mozCancelFullScreen();
-    }
 
-  } else if (element.webkitRequestFullScreen) {
 
-    if (!document.webkitIsFullScreen) {
-      element.webkitRequestFullScreen();
-    } else {
-      document.webkitCancelFullScreen();
-    }
+//Navigation
+//schaue Oben, findet sich in der Eingabe1&Eingabe2!!
 
-  }
 
-}
 
-//Fullbild versuch
+
