@@ -1,6 +1,7 @@
 var Eingabe1
 var Eingabe2
 
+
 var mymap = L.map('mapid').setView([51.505, -0.09], 13);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -29,13 +30,18 @@ marker.bindPopup("<b>MediaFactory</b><br>Softwareentwickler in Luebeck, Schleswi
     $("#Isearch").click(function(){
         doLocate(eingabeStr.value, eingabeOrt.value);
     });
-}());
+    $("#IRefresh").click(function(){
+
+})();
+
+var Routi={};
 
 function doLocate(str, ort) {
         if ( ort == '') {
             alert('Straße und Ort muessen angegeben werden');
             return;
         }
+
         let url = "https://nominatim.openstreetmap.org/search?format=json&limit=1&polygon=0&addressdetails=0&q="
         $.ajax({
             url: url + encodeURI(str) + ',' + encodeURI(ort),
@@ -45,19 +51,23 @@ function doLocate(str, ort) {
                     mymap.setView([result[0].lat, result[0].lon], 15)
                     Eingabe1=result[0].lat;
                     Eingabe2=result[0].lon;
-                    L.Routing.control({
-                      waypoints: [
-                        L.latLng(53.866376, 10.687195),
-                        L.latLng(parseFloat(Eingabe1), parseFloat(Eingabe2))
-                      ]
+                    
+                    $scope.routingControl =  L.Routing.control({
+                    waypoints: [ L.latLng(53.866376, 10.687195), L.latLng(parseFloat(Eingabe1), parseFloat(Eingabe2))],
+                        lineOptions: {
+                           styles: [{color: 'purple', opacity: 1, weight: 5}]
+                        }
                     }).addTo(mymap);
+
+                
+
 
                 } else {
                     alert("Adresse nicht gefunden")
                 }
             }
         });
-    }
+    }   
 
 
 //Fullscreen
@@ -87,12 +97,4 @@ mymap.addControl(new L.Control.ScaleNautic({
                 nautic: false
             }));
 
-
-
-
-//Navigation
-//schaue Oben, findet sich in der Eingabe1&Eingabe2!!
-
-
-
-
+//Navigation befindet sich in der setLatLng Geschichte

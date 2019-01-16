@@ -1,9 +1,1 @@
 #mapid { height: 500px; }
-#MiniMap
-{    
-  land:'#FFFF00',
-  water:'#3333FF',
-  marker:'#000000',
-  topojsonSrc: 'path/to/world.json'
-
-}
